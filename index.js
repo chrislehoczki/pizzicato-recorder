@@ -77,7 +77,6 @@ export default function PizzicatoRecorder(Pizzicato) {
         });
       }
     },
-    // this is taken from RecorderJS and requires attribution
     controller: function (source, cfg, worker) {
       var recording = false;
       var config = cfg || {};
@@ -114,7 +113,7 @@ export default function PizzicatoRecorder(Pizzicato) {
       };
 
       source.connect(this.node);
-      this.node.connect(this.context.destination); // if the script node is not connected to an output the "onaudioprocess" event is not triggered in chrome.
+      this.node.connect(this.context.destination);
     },
     createWorker: function() {
       const blob = new Blob([this.workerString], {
