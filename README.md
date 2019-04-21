@@ -34,23 +34,21 @@ PizzicatoRecorder(Pizzicato)
 
 document.addEventListener('click', () => {
   Pizzicato.Recorder.start()
-
   var sound = new Pizzicato.Sound('bird.wav', function(err) {
-	if (err) return console.error(err);
-
-	sound.play();
-
-	sound.on('end', function() {
-	  Pizzicato.Recorder.stop('wav', handleAudio)
-	})
-  });
+    if (err) return console.error(err);
+	  sound.play()
+	  sound.on('end', function() {
+	    Pizzicato.Recorder.stop('wav', handleAudio)
+	  })
+  })
 })
 
 function handleAudio(file, fileType) {
-  let url = URL.createObjectURL(file);
-  let hf = document.createElement('a');
-  hf.href = url;
-  hf.download = 'pizzicato-recorder-rocks.' + fileType;
-  hf.innerHTML = hf.download;
-  hf.click();
-}```
+  let url = URL.createObjectURL(file)
+  let hf = document.createElement('a')
+  hf.href = url
+  hf.download = 'pizzicato-recorder-rocks.' + fileType
+  hf.innerHTML = hf.download
+  hf.click()
+}
+```
