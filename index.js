@@ -2,7 +2,8 @@ export default function PizzicatoRecorder(Pizzicato) {
   Pizzicato.Recorder = {
     instance: null,
     worker: null,
-    start: function() {
+    start: function(options) {
+      this.options = options
       if (!this.worker) {
         // create our worker
         this.worker = this.createWorker();
@@ -40,6 +41,11 @@ export default function PizzicatoRecorder(Pizzicato) {
       } else {
         this.comms.exportWAV.call(this);
       }
+      if (this.options.mute) {
+        // reconnect our speakers  with timeout to avoid click
+        setTimeout(() => Pizzicato.masterGainNode.connect(Pizzicato.context.destination), 50)
+      }
+
       function endCallback (file) {
         callback(file, fileType);
         Pizzicato.Events.off('audioFile', endCallback)
@@ -51,11 +57,17 @@ export default function PizzicatoRecorder(Pizzicato) {
       // attach event listeners
       Pizzicato.Events.on('conversionProgress', progressCallback);
       Pizzicato.Events.on('audioFile', endCallback);
+      // remove options
+      this.options = null
     },
     processNodes: function() {
       // connect our master gain node to a media stream destination for processing audio
       var source = Pizzicato.masterGainNode;
       var dest = Pizzicato.context.createMediaStreamDestination();
+      var speaker = Pizzicato.context.destination
+      if (this.options.mute) {
+        source.disconnect(speaker)
+      }
       source.connect(dest);
       return source;
     },

@@ -4,7 +4,8 @@
   "description": "A recorder extension for PizzicatoJS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "parcel test/index.html",
+    "build": "parcel build test/index.html"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/christoph-phillips/pizzicato-recorder/issues"
   },
-  "homepage": "https://github.com/christoph-phillips/pizzicato-recorder#readme"
+  "homepage": "https://github.com/christoph-phillips/pizzicato-recorder#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "pizzicato": "^0.6.4"
+  },
+  "dependencies": {
+    "pizzicato-recorder": "^1.0.2"
+  }
 }
