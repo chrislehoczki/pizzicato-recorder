@@ -1,6 +1,6 @@
 {
   "name": "pizzicato-recorder",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A recorder extension for PizzicatoJS",
   "main": "index.js",
   "scripts": {
