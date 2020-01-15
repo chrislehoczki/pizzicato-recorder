@@ -3,18 +3,18 @@ export default function PizzicatoRecorder(Pizzicato) {
     instance: null,
     worker: null,
     start: function(options) {
-      this.options = options
+      this.options = options;
       if (!this.worker) {
         // create our worker
         this.worker = this.createWorker();
         // listen for events
         this.worker.onmessage = function(e) {
           switch (e.data.type) {
-            case 'audioBlob':
-              Pizzicato.Events.trigger('audioFile', e.data.audioBlob);
+            case "audioBlob":
+              Pizzicato.Events.trigger("audioFile", e.data.audioBlob);
               break;
-            case 'progress':
-              Pizzicato.Events.trigger('conversionProgress', e.data.progress);
+            case "progress":
+              Pizzicato.Events.trigger("conversionProgress", e.data.progress);
               break;
           }
         };
@@ -36,37 +36,40 @@ export default function PizzicatoRecorder(Pizzicato) {
       // stop our worker from taking data
       this.comms.stop.call(this);
       // choose export according to filetype
-      if (fileType === 'mp3') {
+      if (fileType === "mp3") {
         this.comms.exportMP3.call(this);
       } else {
         this.comms.exportWAV.call(this);
       }
       if (this.options.mute) {
         // reconnect our speakers  with timeout to avoid click
-        setTimeout(() => Pizzicato.masterGainNode.connect(Pizzicato.context.destination), 50)
+        setTimeout(
+          () => Pizzicato.masterGainNode.connect(Pizzicato.context.destination),
+          50
+        );
       }
 
-      function endCallback (file) {
+      function endCallback(file) {
         callback(file, fileType);
-        Pizzicato.Events.off('audioFile', endCallback)
+        Pizzicato.Events.off("audioFile", endCallback);
       }
-      function progressCallback () {
+      function progressCallback() {
         progress();
-        Pizzicato.Events.off('conversionProgress', progressCallback)
+        Pizzicato.Events.off("conversionProgress", progressCallback);
       }
       // attach event listeners
-      Pizzicato.Events.on('conversionProgress', progressCallback);
-      Pizzicato.Events.on('audioFile', endCallback);
+      Pizzicato.Events.on("conversionProgress", progressCallback);
+      Pizzicato.Events.on("audioFile", endCallback);
       // remove options
-      this.options = null
+      this.options = null;
     },
     processNodes: function() {
       // connect our master gain node to a media stream destination for processing audio
       var source = Pizzicato.masterGainNode;
       var dest = Pizzicato.context.createMediaStreamDestination();
-      var speaker = Pizzicato.context.destination
+      var speaker = Pizzicato.context.destination;
       if (this.options.mute) {
-        source.disconnect(speaker)
+        source.disconnect(speaker);
       }
       source.connect(dest);
       return source;
@@ -74,28 +77,28 @@ export default function PizzicatoRecorder(Pizzicato) {
     comms: {
       clear: function() {
         this.worker.postMessage({
-          command: 'clear'
+          command: "clear"
         });
       },
       stop: function() {
         this.worker.postMessage({
-          command: 'stopRecord'
+          command: "stopRecord"
         });
       },
       exportWAV: function() {
         this.worker.postMessage({
-          command: 'exportWAV',
-          type: 'audio/wav'
+          command: "exportWAV",
+          type: "audio/wav"
         });
       },
       exportMP3: function() {
         this.worker.postMessage({
-          command: 'exportStereoMP3',
-          type: 'audio/wav'
+          command: "exportStereoMP3",
+          type: "audio/wav"
         });
       }
     },
-    controller: function (source, cfg, worker) {
+    controller: function(source, cfg, worker) {
       var recording = false;
       var config = cfg || {};
       var bufferLen = config.bufferLen || 4096;
@@ -106,7 +109,7 @@ export default function PizzicatoRecorder(Pizzicato) {
         this.node = this.context.createScriptProcessor(bufferLen, 2, 2);
       }
       worker.postMessage({
-        command: 'init',
+        command: "init",
         config: {
           sampleRate: this.context.sampleRate
         }
@@ -114,7 +117,7 @@ export default function PizzicatoRecorder(Pizzicato) {
       this.node.onaudioprocess = function(e) {
         if (!recording) return;
         worker.postMessage({
-          command: 'record',
+          command: "record",
           buffer: [
             e.inputBuffer.getChannelData(0),
             e.inputBuffer.getChannelData(1)
@@ -136,7 +139,7 @@ export default function PizzicatoRecorder(Pizzicato) {
     createWorker: function() {
       const blob = new Blob([this.workerString], {
         type: "text/javascript"
-      })
+      });
       // Note: window.webkitURL.createObjectURL() in Chrome 10+.
       return new Worker(window.URL.createObjectURL(blob));
     },
